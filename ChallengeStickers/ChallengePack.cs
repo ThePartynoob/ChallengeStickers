@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using ChallengeStickers;
+using HarmonyLib;
+using MTM101BaldAPI.Reflection;
 using UnityEngine;
 
 internal class ChallengeStickerPackAnimator : MonoBehaviour
@@ -12,6 +16,17 @@ internal class ChallengeStickerPackAnimator : MonoBehaviour
     void Start()
     {
         spriteRenderer.sprite = sprites[0];
+        var StoreRoom = Resources.FindObjectsOfTypeAll<RoomAsset>().First(x => ((UnityEngine.Object)x).name == "Room_JohnnysStore");
+        List<RoomFunction> functions = (List<RoomFunction>)StoreRoom.roomFunctionContainer.ReflectionGetVariable("functions");
+        StoreRoomFunction SRF = (StoreRoomFunction)functions.First(x => x is StoreRoomFunction);
+        var pickupInstance = this.gameObject.GetComponent<Pickup>();
+        var _e = AccessTools.Method(typeof(StoreRoomFunction), "ItemCollected");
+        var _f = AccessTools.Method(typeof(StoreRoomFunction), "ItemPurchased");
+        var _g = AccessTools.Method(typeof(StoreRoomFunction), "ItemDenied");
+        pickupInstance.OnItemCollected += (Pickup.PickupInteractionDelegate)_e.CreateDelegate(typeof(Pickup.PickupInteractionDelegate),SRF);
+        pickupInstance.OnItemPurchased += (Pickup.PickupInteractionDelegate)_f.CreateDelegate(typeof(Pickup.PickupInteractionDelegate),SRF);
+        pickupInstance.OnItemDenied += (Pickup.PickupInteractionDelegate)_g.CreateDelegate(typeof(Pickup.PickupInteractionDelegate),SRF);
+        
     }
     void Update()
     {

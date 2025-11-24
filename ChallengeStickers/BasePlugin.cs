@@ -172,13 +172,8 @@ public class BasePlugin : BaseUnityPlugin
         List<RoomFunction> functions = (List<RoomFunction>)StoreRoom.roomFunctionContainer.ReflectionGetVariable("functions");
         StoreRoomFunction SRF = (StoreRoomFunction)functions.First(x => x is StoreRoomFunction);
         Debug.Log(SRF.GetType());
-        var _e = AccessTools.Method(typeof(StoreRoomFunction), "ItemCollected");
-        var _f = AccessTools.Method(typeof(StoreRoomFunction), "ItemPurchased");
-        var _g = AccessTools.Method(typeof(StoreRoomFunction), "ItemDenied");
         
-        pickupInstance.OnItemCollected += (Pickup.PickupInteractionDelegate)_e.CreateDelegate(typeof(Pickup.PickupInteractionDelegate),SRF);
-        pickupInstance.OnItemPurchased += (Pickup.PickupInteractionDelegate)_f.CreateDelegate(typeof(Pickup.PickupInteractionDelegate),SRF);
-        pickupInstance.OnItemDenied += (Pickup.PickupInteractionDelegate)_g.CreateDelegate(typeof(Pickup.PickupInteractionDelegate),SRF);
+        
         pickupInstance.item = ASM.Get<ItemObject>("ITM_Challengestickerpacket");
         pickupInstance.price = 150;
         
