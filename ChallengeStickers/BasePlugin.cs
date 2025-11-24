@@ -154,7 +154,7 @@ public class BasePlugin : BaseUnityPlugin
         yield return "Modifying the store";
         RoomAsset StoreRoom = Resources.FindObjectsOfTypeAll<RoomAsset>().First(x => ((UnityEngine.Object)x).name == "Room_JohnnysStore");
         GameObject Counter = Resources.FindObjectsOfTypeAll<GameObject>().First(x => x.name == "Counter");
-        Pickup PickupPrefab = Resources.FindObjectsOfTypeAll<Pickup>().Last();
+        GameObject PickupPrefab = Resources.FindObjectsOfTypeAll<GameObject>().First(x => x.name == "Pickup");
 
         StoreRoom.basicObjects.Add(new()
         {
@@ -163,19 +163,19 @@ public class BasePlugin : BaseUnityPlugin
             prefab = Counter.transform
         });
 
-        Pickup pickupInstance = GameObject.Instantiate(PickupPrefab.gameObject).GetComponent<Pickup>();
-        var a= pickupInstance.gameObject.AddComponent<ChallengeStickerPackAnimator>();
+        GameObject pickupInstance = GameObject.Instantiate(PickupPrefab);
+        var a= pickupInstance.AddComponent<ChallengeStickerPackAnimator>();
         a.sprites = ChallengeStickerPacketSprites;
         a.framesPerSecond = 12f;
-        a.spriteRenderer = pickupInstance.gameObject.transform.Find("ItemSprite").GetComponent<SpriteRenderer>();
+        a.spriteRenderer = pickupInstance.transform.Find("ItemSprite").GetComponent<SpriteRenderer>();
         
         List<RoomFunction> functions = (List<RoomFunction>)StoreRoom.roomFunctionContainer.ReflectionGetVariable("functions");
         StoreRoomFunction SRF = (StoreRoomFunction)functions.First(x => x is StoreRoomFunction);
         Debug.Log(SRF.GetType());
+        var _pickup = pickupInstance.AddComponent<Pickup>();
         
-        
-        pickupInstance.item = ASM.Get<ItemObject>("ITM_Challengestickerpacket");
-        pickupInstance.price = 150;
+        _pickup.item = ASM.Get<ItemObject>("ITM_Challengestickerpacket");
+        _pickup.price = 150;
         
 
         StoreRoom.basicObjects.Add(new()
