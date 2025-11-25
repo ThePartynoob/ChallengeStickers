@@ -35,6 +35,8 @@ public class BasePlugin : BaseUnityPlugin
 
     public WeightedSticker[] ChallengeStickerPackStickers;
 
+    public static Pickup PickupPre;
+
     public Sprite[] ChallengeStickerPacketSprites;
     IEnumerator PreLoad()
     {
@@ -121,8 +123,7 @@ public class BasePlugin : BaseUnityPlugin
         .SetAsNotOverridable()
         .SetEnum("ITM_Challengestickerpacket")
         .Build());
-
-        
+        PickupPre = Resources.FindObjectsOfTypeAll<Pickup>().First(x => x.gameObject.activeSelf);
     }
 
     void Awake()
@@ -163,27 +164,7 @@ public class BasePlugin : BaseUnityPlugin
             prefab = Counter.transform
         });
 
-        GameObject pickupInstance = GameObject.Instantiate(PickupPrefab);
-        var a= pickupInstance.AddComponent<ChallengeStickerPackAnimator>();
-        a.sprites = ChallengeStickerPacketSprites;
-        a.framesPerSecond = 12f;
-        a.spriteRenderer = pickupInstance.transform.Find("ItemSprite").GetComponent<SpriteRenderer>();
-        
-        List<RoomFunction> functions = (List<RoomFunction>)StoreRoom.roomFunctionContainer.ReflectionGetVariable("functions");
-        StoreRoomFunction SRF = (StoreRoomFunction)functions.First(x => x is StoreRoomFunction);
-        Debug.Log(SRF.GetType());
-        var _pickup = pickupInstance.AddComponent<Pickup>();
-        
-        _pickup.item = ASM.Get<ItemObject>("ITM_Challengestickerpacket");
-        _pickup.price = 150;
-        
-
-        StoreRoom.basicObjects.Add(new()
-        {
-            position = new Vector3(35,5,23),
-            rotation = Quaternion.identity,
-            prefab = pickupInstance.transform
-        });
+       
     }
 
 
@@ -191,7 +172,7 @@ public class BasePlugin : BaseUnityPlugin
     {
         List<WeightedSticker> _potentialStickersToAdd = new List<WeightedSticker>();
         StickerManager sm = Singleton<StickerManager>.Instance;
-        foreach (WeightedSticker weightedSticker in potentialStickers)
+        foreach (WeightedSticker weightedSticker in ChallengeStickerPackStickers)
         {
             _potentialStickersToAdd.Add(new WeightedSticker(weightedSticker.selection, Mathf.RoundToInt((float)weightedSticker.weight * sm.GetStickerOddsMultiplier(weightedSticker.selection))));
         }
